@@ -15,15 +15,15 @@ Una REST API con tres flujos principales que reemplaza el proceso manual por uno
 ```mermaid
 flowchart TD
     A([Inicio: Nueva entrega]) --> B[Seleccionar empleado]
-    B --> C[Agregar equipos por serie/código]
-    C --> D{¿Agregar más equipos?}
-    D -->|Sí| C
+    B --> C[Agregar equipos por serie o codigo]
+    C --> D{Agregar mas equipos?}
+    D -->|Si| C
     D -->|No| E[Desplegar checklist por equipo]
-    E --> F[ Técnico responde checklist]
-    F --> G{¿Todos los equipos checklist completo?}
+    E --> F[Tecnico responde checklist]
+    F --> G{Todos los equipos con checklist completo?}
     G -->|No| E
-    G -->|Sí| H[Confirmar entrega]
-    H --> I[\"Transacción: genera acta + estado ENTREGADO + correo/\"]
+    G -->|Si| H[Confirmar entrega]
+    H --> I[Transaccion: acta + estado ENTREGADO + correo]
     I --> J([Fin])
 ```
 
@@ -31,15 +31,15 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A([Inicio]) --> B{¿Origen?}
-    B -->|Preventivo| C[Equipo desde almacén]
+    A([Inicio]) --> B{Origen?}
+    B -->|Preventivo| C[Equipo desde almacen]
     B -->|Correctivo| D[Equipo entregado]
-    C --> E[\"Equipo → EN_MANTENIMIENTO + correo usuario\"]
+    C --> E[Equipo pasa a EN_MANTENIMIENTO + correo usuario]
     D --> E
     E --> F[Registrar trabajo: texto + componentes]
     F --> G[Responder checklist post-mantenimiento]
     G --> H[Cerrar ticket]
-    H --> I[\"Transacción: genera acta + cambia estado + correo\"]
+    H --> I[Transaccion: acta + cambia estado + correo]
     I --> J([Fin])
 ```
 
@@ -49,11 +49,11 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A([Inicio: Empleado devuelve equipo]) --> B[Completar checklist de recepción]
+    A([Inicio: Empleado devuelve equipo]) --> B[Completar checklist de recepcion]
     B --> C[Comparar con checklist de entrega]
-    C --> D{¿Todo en orden?}
-    D -->|Sí| E[\"Estado DISPONIBLE + genera acta + correo\"]
-    D -->|No| F{¿Daño?}
+    C --> D{Todo en orden?}
+    D -->|Si| E[Estado DISPONIBLE + acta + correo]
+    D -->|No| F{Dano?}
     F -->|Leve| G[Registrar incidencia LEVE]
     G --> H[Estado EN_MANTENIMIENTO]
     F -->|Grave| I[Registrar incidencia GRAVE]
@@ -73,9 +73,9 @@ El proyecto usa una arquitectura en capas. Cada capa tiene una responsabilidad �
 flowchart TD
     A([Request HTTP])
     A --> B["URLs — urls.py"]
-    B --> C["Views / ViewSets — views.py\nSolo orquesta, no tiene lógica de negocio"]
-    C --> D["Services — services.py\nToda la lógica de negocio vive aquí"]
-    D --> E["Serializers — serializers.py\nValidación de entrada y formato de salida"]
+    B --> C["Views / ViewSets — views.py\nSolo orquesta, no tiene logica de negocio"]
+    C --> D["Services — services.py\nToda la logica de negocio vive aqui"]
+    D --> E["Serializers — serializers.py\nValidacion de entrada y formato de salida"]
     E --> F["Models — models.py\nEstructura de datos y acceso a la base de datos"]
     F --> G[(PostgreSQL)]
 ```
@@ -111,5 +111,3 @@ stateDiagram-v2
     OBSERVADO --> EN_MANTENIMIENTO
     OBSERVADO --> DADO_DE_BAJA
 ```
-
----
