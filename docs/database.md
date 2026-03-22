@@ -229,6 +229,11 @@ erDiagram
 ### personal
 `Cargo`, `Sucursal`, `Area`, `Personal` (AbstractUser), `Empleado`
 
+**Constraints adicionales:**
+- `Sucursal.nombre` — unique, no pueden existir dos sucursales con el mismo nombre
+- `Cargo.nombre` — unique, no pueden existir dos cargos con el mismo nombre
+- `Area` — unique por combinación de `nombre` + `sucursal`, dos áreas de distinta sucursal pueden tener el mismo nombre
+
 ### equipos
 `TipoEquipo`, `TipoAtributo`, `TipoEquipo_Atributo`, `ValorAtributo`, `Equipo`, `TipoComponente`, `Componente`, `EquipoComponente`, `ChecklistItem`, `TipoEquipo_Checklist`
 
