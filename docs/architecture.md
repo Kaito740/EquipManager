@@ -6,7 +6,7 @@ El área de Sistemas manejaba equipos electrónicos completamente en Excel. Cada
 
 ## La solución
 
-Una REST API con tres flujos principales que reemplaza el proceso manual por uno digital, trazable y con evidencia automática.
+Una REST API con tres flujos principales que reemplaza el proceso manual por uno digital, trazable y con evidencia en actas generadas automáticamente.
 
 ---
 
@@ -23,7 +23,7 @@ flowchart TD
     F --> G{Todos los equipos con checklist completo?}
     G -->|No| E
     G -->|Si| H[Confirmar entrega]
-    H --> I[Transaccion: acta + estado ENTREGADO + correo]
+    H --> I[Transaccion: acta + estado ENTREGADO]
     I --> J([Fin])
 ```
 
@@ -34,12 +34,12 @@ flowchart TD
     A([Inicio]) --> B{Origen?}
     B -->|Preventivo| C[Equipo desde almacen]
     B -->|Correctivo| D[Equipo entregado]
-    C --> E[Equipo pasa a EN_MANTENIMIENTO + correo usuario]
+    C --> E[Equipo pasa a EN_MANTENIMIENTO]
     D --> E
     E --> F[Registrar trabajo: texto + componentes]
     F --> G[Responder checklist post-mantenimiento]
     G --> H[Cerrar ticket]
-    H --> I[Transaccion: acta + cambia estado + correo]
+    H --> I[Transaccion: acta + cambia estado]
     I --> J([Fin])
 ```
 
@@ -49,18 +49,23 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A([Inicio: Empleado devuelve equipo]) --> B[Completar checklist de recepcion]
-    B --> C[Comparar con checklist de entrega]
-    C --> D{Todo en orden?}
-    D -->|Si| E[Estado DISPONIBLE + acta + correo]
-    D -->|No| F{Dano?}
-    F -->|Leve| G[Registrar incidencia LEVE]
-    G --> H[Estado EN_MANTENIMIENTO]
-    F -->|Grave| I[Registrar incidencia GRAVE]
-    I --> J[Estado DADO_DE_BAJA]
-    E --> K([Fin])
+    A([Inicio: Empleado devuelve equipos]) --> B[Tecnico marca estado de cada equipo]
+    B --> C{Estado del equipo?}
+    C -->|Conforme| D[Estado DISPONIBLE]
+    C -->|Incidencia leve| E[Registrar incidencia LEVE]
+    E --> F[Estado EN_MANTENIMIENTO]
+    C -->|Incidencia grave| G[Registrar incidencia GRAVE]
+    G --> H[Estado DADO_DE_BAJA]
+    C -->|No devuelto| I[Registrar incidencia con descripcion]
+    I --> J[Estado PERDIDO]
+    D --> K{Mas equipos?}
+    F --> K
     H --> K
     J --> K
+    K -->|Si| B
+    K -->|No| L[Confirmar devolucion]
+    L --> M[Transaccion: acta + actualiza estados]
+    M --> N([Fin])
 ```
 
 ---
@@ -86,7 +91,7 @@ flowchart TD
 |---|---|---|---|
 | URLs | `urls.py` | Enruta cada request al ViewSet correcto | Nada más |
 | Views | `views.py` | Recibe el request, llama al Service, devuelve la respuesta | Lógica de negocio |
-| Services | `services.py` | Genera actas, cambia estados, envía correos, valida reglas de negocio | Acceso directo a HTTP |
+| Services | `services.py` | Genera actas, cambia estados, valida reglas de negocio | Acceso directo a HTTP |
 | Serializers | `serializers.py` | Valida datos de entrada, formatea JSON de salida | Lógica de negocio |
 | Models | `models.py` | Define tablas y relaciones, queries básicos | Lógica de negocio |
 
@@ -94,7 +99,7 @@ flowchart TD
 
 Poner lógica en las Views las vuelve difíciles de testear y de reutilizar — un ViewSet está atado al ciclo HTTP. Poner lógica en los Models los convierte en clases que hacen demasiado (Fat Models). Los Services son clases o funciones Python puras, sin dependencia de HTTP ni de ORM, lo que las hace fáciles de testear unitariamente y reutilizables desde cualquier punto del sistema.
 
-Ejemplo: cuando se confirma una entrega, el ViewSet no genera el acta ni envía el correo. Solo llama a `AsignacionService.confirmar_entrega(asignacion_id)`, que internamente ejecuta la transacción completa.
+Ejemplo: cuando se confirma una entrega, el ViewSet no genera el acta ni cambia el estado de los equipos directamente. Solo llama a `AsignacionService.confirmar_entrega(asignacion_id)`, que internamente ejecuta la transacción completa.
 
 ---
 
@@ -103,11 +108,24 @@ Ejemplo: cuando se confirma una entrega, el ViewSet no genera el acta ni envía 
 ```mermaid
 stateDiagram-v2
     [*] --> DISPONIBLE
-    DISPONIBLE --> ENTREGADO
-    ENTREGADO --> EN_MANTENIMIENTO
-    ENTREGADO --> OBSERVADO
-    EN_MANTENIMIENTO --> DISPONIBLE
-    EN_MANTENIMIENTO --> DADO_DE_BAJA
+    DISPONIBLE --> ENTREGADO : entrega confirmada
+    ENTREGADO --> DISPONIBLE : devolucion sin incidencias
+    ENTREGADO --> EN_MANTENIMIENTO : incidencia LEVE
+    ENTREGADO --> DADO_DE_BAJA : incidencia GRAVE
+    ENTREGADO --> PERDIDO : no devuelto al cerrar acta
+    EN_MANTENIMIENTO --> DISPONIBLE : ticket cerrado
+    EN_MANTENIMIENTO --> DADO_DE_BAJA : irreparable
     OBSERVADO --> EN_MANTENIMIENTO
     OBSERVADO --> DADO_DE_BAJA
 ```
+
+### Descripcion de cada estado
+
+| Estado | Significa |
+|---|---|
+| DISPONIBLE | En almacen, listo para entregarse |
+| ENTREGADO | Con un empleado actualmente |
+| EN_MANTENIMIENTO | En taller, fuera de servicio temporalmente |
+| OBSERVADO | Requiere revision, pendiente de decision |
+| DADO_DE_BAJA | Irreparable o descartado definitivamente |
+| PERDIDO | Entregado a un empleado y no fue devuelto |

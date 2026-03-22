@@ -10,7 +10,7 @@ Registro de todas las decisiones tomadas durante el diseño, con su justificaci�
 | Arquitectura inicial | Monolito modular | Más simple para empezar, extraíble a futuro |
 | Checklist | Dinámico configurable | Sin tocar código para agregar preguntas |
 | Firma de conformidad | Solo técnico firma en papel | Firma de usuario paraliza el flujo si se niega |
-| Notificaciones | Correo directo + tabla Notificacion | Sin Celery por ahora, se agrega si se necesita |
+| Notificaciones por correo | Descartado | Los flujos generan actas firmadas en papel — el correo como comprobante es redundante y agrega complejidad innecesaria |
 | Campos opcionales | NULL en base de datos | Tipos correctos, integridad referencial |
 | Estados y tipos | Choices en código | Son fijos por diseño del negocio |
 | Permisos | Sistema nativo de Django | Reemplaza tabla Rol personalizada, más flexible y granular |
@@ -24,6 +24,14 @@ Registro de todas las decisiones tomadas durante el diseño, con su justificaci�
 | DNI | char(8) | Identificación nacional peruana, siempre 8 dígitos |
 | Descripción de mantenimiento | Texto libre | Estandarizar soluciones es inviable, cada caso es distinto |
 | Sucursales | Tabla independiente con áreas | Cada sucursal tiene su propio equipo de Sistemas |
-| Correo | Gmail SMTP con django.core.mail | Sistema interno con pocos usuarios, sin necesidad de servicio externo |
+| Dirección de sucursal | Eliminada | Las sucursales mineras están en zonas remotas sin dirección postal útil — el nombre es suficiente |
+| Correo de empleado | Eliminado | El sistema no envía correos — las actas se imprimen y firman físicamente |
+| Términos y condiciones | Tabla propia | Permite actualizar el texto sin tocar código y tener versiones distintas por tipo de acta |
+| Ticket de mantenimiento | Sin equipo_id directo | Un ticket puede incluir varios equipos — la tabla TicketEquipo resuelve la relación many-to-many |
+| Número de acta | Campo propio en Acta | Identificador legible tipo 012-2025 para búsqueda rápida sin conocer el ID interno |
+| Estado PERDIDO en equipo | Agregado a choices | Cubre el caso real de equipos entregados que no son devueltos — distinto a DADO_DE_BAJA que implica daño irreparable |
+| Estados de ticket | Solo ABIERTO y CERRADO | EN_PROCESO no agrega valor — cuando existe el ticket ya se sabe que está en proceso, y al terminar se cierra directamente con la descripción |
+| Tabla Acta unificada | Una sola tabla para los tres tipos | El número de acta es secuencial entre tipos — separar en tres tablas complicaría la generación del número. La columna ticket_id nullable no viola normalización |
+| Observaciones en Acta | Texto libre con default vacío | Cubre detalles que el checklist no puede expresar con true/false. En entrega: detalles visuales preexistentes como rajaduras que no afectan funcionamiento. En devolución: contexto general del acta más allá de las incidencias. En mantenimiento: descripción de la solución aplicada |
 | Testing | pytest + pytest-django | Estándar de la industria para Django |
 | Variables de entorno | python-decouple | Más seguro que python-dotenv, lanza error si falta una variable |

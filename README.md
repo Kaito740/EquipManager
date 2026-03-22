@@ -16,11 +16,10 @@ Esto generaba problemas concretos:
 - **Sin evidencia de estado:** cuando un equipo volvía dañado, nadie podía probar si el daño existía antes de la entrega o lo causó el usuario.
 - **Sin trazabilidad:** los códigos patrimoniales existían, pero nadie sabía en tiempo real dónde estaba cada bien ni en qué estado.
 - **Inventario ciego:** para ubicar un equipo específico había que revisar cada archivo de Excel uno por uno.
-- **Área de Patrimonio desconectada:** seguía con su propio Excel gigante, desincronizado del área de Sistemas.
 
 ## La solución
 
-EquipManager reemplaza ese proceso manual con una API que registra cada movimiento, genera actas automáticamente, envía correos de evidencia y permite saber en cualquier momento dónde está cada equipo y en qué estado.
+EquipManager reemplaza ese proceso manual con una API que registra cada movimiento, genera actas automáticamente en PDF listas para imprimir y firmar, y permite saber en cualquier momento dónde está cada equipo y en qué estado.
 
 ## Stack
 

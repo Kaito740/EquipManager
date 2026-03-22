@@ -20,16 +20,10 @@ cp .env.example .env
 
 ## Variables a agregar durante el desarrollo
 
-Estas variables no existen todavía pero serán necesarias conforme avance el proyecto:
-
 | Variable | Ejemplo | Módulo | Descripción |
 |----------|---------|--------|-------------|
-| `EMAIL_HOST` | `smtp.gmail.com` | Notificaciones | Servidor SMTP para envío de correos |
-| `EMAIL_PORT` | `587` | Notificaciones | Puerto del servidor SMTP |
-| `EMAIL_HOST_USER` | `sistema@empresa.com` | Notificaciones | Correo remitente |
-| `EMAIL_HOST_PASSWORD` | `app_password_aqui` | Notificaciones | Contraseña o app password del correo |
-| `EMAIL_USE_TLS` | `True` | Notificaciones | Activar TLS en la conexión SMTP |
 | `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Seguridad | Hosts permitidos, requerido cuando `DEBUG=False` |
+| `CORS_ALLOW_ALL_ORIGINS` | `True` / `False` | CORS | `True` en desarrollo permite cualquier origen. `False` en producción — configurar `CORS_ALLOWED_ORIGINS` con los dominios permitidos |
 
 ---
 
