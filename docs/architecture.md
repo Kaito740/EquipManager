@@ -108,15 +108,13 @@ Ejemplo: cuando se confirma una entrega, el ViewSet no genera el acta ni cambia 
 ```mermaid
 stateDiagram-v2
     [*] --> DISPONIBLE
-    DISPONIBLE --> ENTREGADO : entrega confirmada
-    ENTREGADO --> DISPONIBLE : devolucion sin incidencias
-    ENTREGADO --> EN_MANTENIMIENTO : incidencia LEVE
-    ENTREGADO --> DADO_DE_BAJA : incidencia GRAVE
-    ENTREGADO --> PERDIDO : no devuelto al cerrar acta
+    DISPONIBLE --> EN_USO : entrega confirmada
+    EN_USO --> DISPONIBLE : devolucion sin incidencias
+    EN_USO --> EN_MANTENIMIENTO : incidencia LEVE
+    EN_USO --> DADO_DE_BAJA : incidencia GRAVE
+    EN_USO --> PERDIDO : no devuelto al cerrar acta
     EN_MANTENIMIENTO --> DISPONIBLE : ticket cerrado
     EN_MANTENIMIENTO --> DADO_DE_BAJA : irreparable
-    OBSERVADO --> EN_MANTENIMIENTO
-    OBSERVADO --> DADO_DE_BAJA
 ```
 
 ### Descripcion de cada estado
@@ -124,8 +122,7 @@ stateDiagram-v2
 | Estado | Significa |
 |---|---|
 | DISPONIBLE | En almacen, listo para entregarse |
-| ENTREGADO | Con un empleado actualmente |
+| EN_USO | Con un empleado actualmente |
 | EN_MANTENIMIENTO | En taller, fuera de servicio temporalmente |
-| OBSERVADO | Requiere revision, pendiente de decision |
 | DADO_DE_BAJA | Irreparable o descartado definitivamente |
 | PERDIDO | Entregado a un empleado y no fue devuelto |

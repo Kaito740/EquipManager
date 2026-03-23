@@ -237,6 +237,10 @@ erDiagram
 ### equipos
 `TipoEquipo`, `TipoAtributo`, `TipoEquipo_Atributo`, `ValorAtributo`, `Equipo`, `TipoComponente`, `Componente`, `EquipoComponente`, `ChecklistItem`, `TipoEquipo_Checklist`
 
+**Atributos vs Componentes — distinción clave:**
+- `ValorAtributo` — especificaciones técnicas fijas del equipo: procesador, RAM, sistema operativo. No son piezas físicas, no se reemplazan. Son características propias del equipo que se registran una sola vez al ingresar el equipo al sistema.
+- `EquipoComponente` — piezas físicas reemplazables: disco duro, batería, fuente de poder. Sí se pueden cambiar. Cada reemplazo queda registrado con `fecha_entrada` y `fecha_salida`, formando el historial de componentes del equipo.
+
 ### asignaciones
 `Asignacion`, `AsignacionEquipo`
 
@@ -245,7 +249,7 @@ erDiagram
 
 **Choices de `TicketMantenimiento.estado`:** `ABIERTO`, `CERRADO`
 
-**Choices de `Equipo.estado`:** `DISPONIBLE`, `ENTREGADO`, `EN_MANTENIMIENTO`, `OBSERVADO`, `DADO_DE_BAJA`, `PERDIDO`
+**Choices de `Equipo.estado`:** `DISPONIBLE`, `EN_USO`, `EN_MANTENIMIENTO`, `DADO_DE_BAJA`, `PERDIDO`
 
 **Choices de `Acta.tipo`:** `ENTREGA`, `DEVOLUCION`, `MANTENIMIENTO`
 
