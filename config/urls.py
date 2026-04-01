@@ -23,6 +23,7 @@ api_partterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path('personal/', include('apps.personal.urls')),
+    path('equipos/', include('apps.equipos.urls')),
 ]
 
 urlpatterns = [
