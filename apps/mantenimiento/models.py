@@ -44,6 +44,7 @@ class TicketMantenimiento(models.Model):
         related_name='tickets'
     )
     descripcion = models.TextField()
+    solucion = models.TextField(null=True, blank=True)
     fecha_inicio = models.DateTimeField(auto_now_add=True)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
     estado = models.CharField(
