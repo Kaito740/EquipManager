@@ -37,6 +37,16 @@ class EquipoListView(generics.ListAPIView):
     serializer_class = EquipoSerializer
 
 
+class EquipoDetailView(generics.RetrieveAPIView):
+    queryset = Equipo.objects.select_related(
+        'tipo_equipo', 'sucursal'
+    ).prefetch_related(
+        'atributos__tipo_atributo',
+        'componentes__componente__tipo_componente'
+    )
+    serializer_class = EquipoSerializer
+
+
 class ChecklistItemListView(generics.ListAPIView):
     queryset = ChecklistItem.objects.filter(activo=True)
     serializer_class = ChecklistItemSerializer

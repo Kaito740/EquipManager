@@ -1,8 +1,10 @@
 from rest_framework import status, generics
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .models import TipoMantenimiento, TicketMantenimiento
-from .serializers import TipoMantenimientoSerializer, TicketMantenimientoSerializer, CrearTicketMantenimientoSerializer
-from .service import crear_ticket
+from .serializers import TipoMantenimientoSerializer, TicketMantenimientoSerializer, CrearTicketMantenimientoSerializer, CerrarTicketMantenimientoSerializer
+from .service import crear_ticket, cerrar_ticket
 
 class TipoMantenimientoListView(generics.ListAPIView):
     queryset = TipoMantenimiento.objects.all()
@@ -35,3 +37,22 @@ class TicketMantenimientoCreateView(generics.CreateAPIView):
         
         response_serializer = TicketMantenimientoSerializer(ticket)
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cerrar_ticket_view(request, pk):
+    serializer = CerrarTicketMantenimientoSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    try:
+        ticket = cerrar_ticket(
+            ticket_id=pk,
+            personal_id=serializer.validated_data['personal'],
+            solucion=serializer.validated_data.get('solucion', ''),
+            cambios_componentes=serializer.validated_data.get('cambios_componentes', [])
+        )
+        return Response(TicketMantenimientoSerializer(ticket).data, status=status.HTTP_200_OK)
+    except TicketMantenimiento.DoesNotExist:
+        return Response({'error': 'Ticket no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except ValueError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

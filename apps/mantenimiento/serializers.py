@@ -29,6 +29,7 @@ class TicketMantenimientoSerializer(serializers.ModelSerializer):
             'tipo_mantenimiento', 
             'tipo_mantenimiento_nombre',
             'descripcion', 
+            'solucion',
             'fecha_inicio', 
             'fecha_cierre', 
             'estado',
@@ -44,3 +45,14 @@ class CrearTicketMantenimientoSerializer(serializers.Serializer):
         child=serializers.CharField(),
         min_length=1
     )
+
+class CambioComponenteSerializer(serializers.Serializer):
+    equipo_id = serializers.IntegerField()
+    componente_salida_id = serializers.IntegerField(required=False, allow_null=True)
+    componente_entrada_id = serializers.IntegerField(required=False, allow_null=True)
+
+
+class CerrarTicketMantenimientoSerializer(serializers.Serializer):
+    personal = serializers.IntegerField()
+    solucion = serializers.CharField()
+    cambios_componentes = CambioComponenteSerializer(many=True, required=False, default=list)

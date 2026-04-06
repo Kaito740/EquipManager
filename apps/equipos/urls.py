@@ -5,6 +5,7 @@ from .views import (
     TipoComponenteListView,
     ComponenteListView,
     EquipoListView,
+    EquipoDetailView,
     ChecklistItemListView
 )
 
@@ -14,5 +15,6 @@ urlpatterns = [
     path('tipos-componente/', TipoComponenteListView.as_view(), name='tipo-componente-list'),
     path('componentes/', ComponenteListView.as_view(), name='componente-list'),
     path('equipos/', EquipoListView.as_view(), name='equipo-list'),
+    path('equipos/<int:pk>/', EquipoDetailView.as_view(), name='equipo-detail'),
     path('checklist-items/', ChecklistItemListView.as_view(), name='checklist-item-list'),
 ]

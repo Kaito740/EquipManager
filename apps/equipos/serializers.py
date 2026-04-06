@@ -43,12 +43,17 @@ class TipoEquipoSerializer(serializers.ModelSerializer):
 
 class EquipoSerializer(serializers.ModelSerializer):
     atributos = ValorAtributoSerializer(many=True, read_only=True)
-    componentes = EquipoComponenteSerializer(many=True, read_only=True)
+    componentes = serializers.SerializerMethodField()
+    
     class Meta:
         model = Equipo
         fields = ['id', 'codigo_patrimonial', 'numero_serie', 'tipo_equipo', 'sucursal', 'estado', 'fecha_registro', 'fecha_garantia', 'atributos', 'componentes']
         read_only_fields = ['id', 'fecha_registro']
         depth = 1
+    
+    def get_componentes(self, obj):
+        componentes = obj.componentes.filter(fecha_salida__isnull=True)
+        return EquipoComponenteSerializer(componentes, many=True).data
 
 class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
