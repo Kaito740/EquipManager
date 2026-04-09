@@ -74,7 +74,6 @@ class TicketMantenimiento(models.Model):
 
 
 class TicketEquipo(models.Model):
-    # PROTECT porque el historial de equipos en mantenimiento es permanente
     ticket = models.ForeignKey(
         TicketMantenimiento,
         on_delete=models.PROTECT,
@@ -84,6 +83,11 @@ class TicketEquipo(models.Model):
         Equipo,
         on_delete=models.PROTECT,
         related_name='tickets_mantenimiento'
+    )
+    estado_anterior = models.CharField(
+        max_length=20,
+        choices=Equipo.Estado.choices,
+        null=True
     )
 
     class Meta:

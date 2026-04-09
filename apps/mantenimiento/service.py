@@ -36,9 +36,10 @@ def crear_ticket(personal_id, tipo_mantenimiento_id, descripcion, codigos_patrim
         )
 
         for equipo in equipos:
+            estado_anterior = equipo.estado
             equipo.estado = Equipo.Estado.EN_MANTENIMIENTO
             equipo.save(update_fields=['estado'])
-            TicketEquipo.objects.create(ticket=ticket, equipo=equipo)
+            TicketEquipo.objects.create(ticket=ticket, equipo=equipo, estado_anterior=estado_anterior)
 
     return ticket
 
