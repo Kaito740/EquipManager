@@ -45,3 +45,17 @@ class ActaCreateSerializer(serializers.Serializer):
         if len(value) != len(set(value)):
             raise serializers.ValidationError('No puede haber equipos duplicados.')
         return value
+
+
+class ActaMantenimientoCreateSerializer(serializers.Serializer):
+    ticket_id = serializers.IntegerField()
+    terminos_id = serializers.IntegerField()
+    observaciones = serializers.CharField(required=False, allow_blank=True, default='')
+    checklist = serializers.ListField(min_length=1)
+
+
+class ActaDevolucionCreateSerializer(serializers.Serializer):
+    asignacion_id = serializers.IntegerField()
+    terminos_id = serializers.IntegerField()
+    observaciones = serializers.CharField(required=False, allow_blank=True, default='')
+    checklist = serializers.ListField(required=False, default=list)

@@ -3,9 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
 from apps.actas.models import Acta
-from apps.asignaciones.serializers import ActaCreateSerializer, ActaListSerializer, ActaDetailSerializer
-from apps.asignaciones.service import crear_acta_entrega
+from apps.asignaciones.serializers import ActaCreateSerializer, ActaListSerializer, ActaDetailSerializer, ActaMantenimientoCreateSerializer, ActaDevolucionCreateSerializer
+from apps.asignaciones.service import crear_acta_entrega, crear_acta_mantenimiento, crear_acta_devolucion
 
 
 class ActaView(APIView):
@@ -53,3 +54,49 @@ class ActaDetailView(APIView):
         )
         serializer = ActaDetailSerializer(acta)
         return Response(serializer.data)
+
+
+class ActaMantenimientoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ActaMantenimientoCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        personal_id = request.user.id
+
+        try:
+            crear_acta_mantenimiento(
+                personal_id=personal_id,
+                ticket_id=serializer.validated_data['ticket_id'],
+                terminos_id=serializer.validated_data['terminos_id'],
+                observaciones=serializer.validated_data.get('observaciones', ''),
+                checklist=serializer.validated_data['checklist']
+            )
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Acta de mantenimiento creada exitosamente'}, status=status.HTTP_201_CREATED)
+
+
+class ActaDevolucionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ActaDevolucionCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        personal_id = request.user.id
+
+        try:
+            crear_acta_devolucion(
+                personal_id=personal_id,
+                asignacion_id=serializer.validated_data['asignacion_id'],
+                terminos_id=serializer.validated_data['terminos_id'],
+                observaciones=serializer.validated_data.get('observaciones', ''),
+                checklist=serializer.validated_data.get('checklist')
+            )
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            return Response({'error': f'Error de base de datos: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Acta de devolución creada exitosamente'}, status=status.HTTP_201_CREATED)

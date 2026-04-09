@@ -1,10 +1,27 @@
 from django.utils import timezone
 from django.db import transaction
-from apps.equipos.models import EquipoComponente, Componente
+from apps.equipos.models import Equipo, EquipoComponente, Componente
+
+
+def validar_equipos_existan(equipo_ids):
+    if not equipo_ids:
+        raise ValueError('Debe incluir al menos un equipo.')
+
+    equipos = list(Equipo.objects.filter(id__in=equipo_ids))
+
+    if len(equipos) != len(equipo_ids):
+        raise ValueError('Algunos equipos no existen.')
+
+    return equipos
 
 
 def agregar_componente_a_equipo(equipo_id, componente_id, fecha=None):
-    componente = Componente.objects.get(id=componente_id)
+    validar_equipos_existan([equipo_id])
+    
+    try:
+        componente = Componente.objects.get(id=componente_id)
+    except Componente.DoesNotExist:
+        raise ValueError(f'El componente con id {componente_id} no existe.')
     
     if EquipoComponente.objects.filter(
         componente_id=componente_id,
@@ -23,11 +40,14 @@ def agregar_componente_a_equipo(equipo_id, componente_id, fecha=None):
 
 
 def retirar_componente_de_equipo(equipo_id, componente_id, fecha=None):
-    equipocomponente = EquipoComponente.objects.select_related('componente', 'equipo').get(
-        equipo_id=equipo_id,
-        componente_id=componente_id,
-        fecha_salida__isnull=True
-    )
+    try:
+        equipocomponente = EquipoComponente.objects.select_related('componente', 'equipo').get(
+            equipo_id=equipo_id,
+            componente_id=componente_id,
+            fecha_salida__isnull=True
+        )
+    except EquipoComponente.DoesNotExist:
+        raise ValueError(f'No existe un componente instalado con esos IDs.')
     
     with transaction.atomic():
         equipocomponente.fecha_salida = fecha or timezone.now()
