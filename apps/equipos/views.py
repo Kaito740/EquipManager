@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from .models import TipoEquipo, TipoAtributo, TipoComponente, Componente, Equipo, ChecklistItem
 from .serializers import (
     TipoEquipoSerializer, TipoAtributoSerializer,
@@ -10,21 +11,25 @@ from .serializers import (
 class TipoEquipoListView(generics.ListAPIView):
     queryset = TipoEquipo.objects.all()
     serializer_class = TipoEquipoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class TipoAtributoListView(generics.ListAPIView):
     queryset = TipoAtributo.objects.all()
     serializer_class = TipoAtributoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class TipoComponenteListView(generics.ListAPIView):
     queryset = TipoComponente.objects.all()
     serializer_class = TipoComponenteSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class ComponenteListView(generics.ListAPIView):
     queryset = Componente.objects.all()
     serializer_class = ComponenteSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class EquipoListView(generics.ListAPIView):
@@ -35,6 +40,7 @@ class EquipoListView(generics.ListAPIView):
         'componentes__componente__tipo_componente'
     )
     serializer_class = EquipoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class EquipoDetailView(generics.RetrieveAPIView):
@@ -45,8 +51,10 @@ class EquipoDetailView(generics.RetrieveAPIView):
         'componentes__componente__tipo_componente'
     )
     serializer_class = EquipoSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class ChecklistItemListView(generics.ListAPIView):
     queryset = ChecklistItem.objects.filter(activo=True)
     serializer_class = ChecklistItemSerializer
+    permission_classes = [IsAuthenticated]

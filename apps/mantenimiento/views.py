@@ -6,21 +6,29 @@ from .models import TipoMantenimiento, TicketMantenimiento
 from .serializers import TipoMantenimientoSerializer, TicketMantenimientoSerializer, CrearTicketMantenimientoSerializer, CerrarTicketMantenimientoSerializer
 from .service import crear_ticket, cerrar_ticket
 
+
 class TipoMantenimientoListView(generics.ListAPIView):
     queryset = TipoMantenimiento.objects.all()
     serializer_class = TipoMantenimientoSerializer
+    permission_classes = [IsAuthenticated]
+
 
 class TicketMantenimientoListView(generics.ListAPIView):
     queryset = TicketMantenimiento.objects.select_related('personal', 'tipo_mantenimiento').all()
     serializer_class = TicketMantenimientoSerializer
+    permission_classes = [IsAuthenticated]
+
 
 class TicketMantenimientoDetailView(generics.RetrieveAPIView):
     queryset = TicketMantenimiento.objects.select_related('personal', 'tipo_mantenimiento').all()
     serializer_class = TicketMantenimientoSerializer
+    permission_classes = [IsAuthenticated]
+
 
 class TicketMantenimientoCreateView(generics.CreateAPIView):
     queryset = TicketMantenimiento.objects.all()
     serializer_class = TicketMantenimientoSerializer
+    permission_classes = [IsAuthenticated]
     def create(self, request, *args, **kwargs):
         serializer = CrearTicketMantenimientoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
