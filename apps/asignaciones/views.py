@@ -5,12 +5,16 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from apps.actas.models import Acta
+from apps.core.permissions import DjangoModelPermissionsConView
 from apps.asignaciones.serializers import ActaCreateSerializer, ActaListSerializer, ActaDetailSerializer, ActaMantenimientoCreateSerializer, ActaDevolucionCreateSerializer
 from apps.asignaciones.service import crear_acta_entrega, crear_acta_mantenimiento, crear_acta_devolucion
 
+# Permiso reutilizable para todas las views de este módulo — todas operan sobre Acta.
+_PermisoActa = DjangoModelPermissionsConView.para(Acta)
+
 
 class ActaView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, _PermisoActa]
 
     def get(self, request):
         queryset = Acta.objects.select_related(
@@ -40,7 +44,7 @@ class ActaView(APIView):
 
 
 class ActaDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, _PermisoActa]
 
     def get(self, request, pk):
         acta = get_object_or_404(
@@ -57,7 +61,7 @@ class ActaDetailView(APIView):
 
 
 class ActaMantenimientoView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, _PermisoActa]
 
     def post(self, request):
         serializer = ActaMantenimientoCreateSerializer(data=request.data)
@@ -79,7 +83,7 @@ class ActaMantenimientoView(APIView):
 
 
 class ActaDevolucionView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, _PermisoActa]
 
     def post(self, request):
         serializer = ActaDevolucionCreateSerializer(data=request.data)

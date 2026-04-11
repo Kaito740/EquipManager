@@ -7,20 +7,26 @@ from apps.actas.models import Acta, RespuestaChecklist, TerminosCondiciones
 from apps.mantenimiento.models import TicketMantenimiento
 
 def generar_numero_acta(tipo):
+    """
+    Genera el siguiente número de acta correlativo para el tipo dado.
+    Debe llamarse siempre dentro de un bloque transaction.atomic() con
+    select_for_update() activo para evitar race conditions bajo concurrencia.
+    Usa order_by('-id') en vez de order_by('-numero_acta') para garantizar
+    orden numérico correcto más allá del acta 9 del año.
+    """
     letras = {'ENTREGA': 'E', 'DEVOLUCION': 'D', 'MANTENIMIENTO': 'M'}
     prefijo = letras.get(tipo)
     año = timezone.now().year
 
-    ultimas = Acta.objects.filter(
-        numero_acta__startswith=f'{prefijo}-{año}-'
-    ).order_by('-numero_acta')
+    ultima = (
+        Acta.objects
+        .select_for_update()
+        .filter(numero_acta__startswith=f'{prefijo}-{año}-')
+        .order_by('-id')
+        .first()
+    )
 
-    if ultimas.exists():
-        ultimo_num = ultimas.first().numero_acta.split('-')[-1]
-        siguiente = int(ultimo_num) + 1
-    else:
-        siguiente = 1
-
+    siguiente = int(ultima.numero_acta.split('-')[-1]) + 1 if ultima else 1
     return f'{prefijo}-{año}-{siguiente:03d}'
 
 def validar_equipos_entrega(equipo_ids):

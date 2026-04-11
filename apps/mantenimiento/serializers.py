@@ -53,6 +53,7 @@ class CambioComponenteSerializer(serializers.Serializer):
 
 
 class CerrarTicketMantenimientoSerializer(serializers.Serializer):
-    personal = serializers.IntegerField()
+    # 'personal' eliminado: el id del usuario se obtiene de request.user en la view,
+    # no del body del request, para evitar suplantación de identidad.
     solucion = serializers.CharField()
     cambios_componentes = CambioComponenteSerializer(many=True, required=False, default=list)
