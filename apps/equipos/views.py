@@ -1,5 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters import rest_framework as filters
 from .models import TipoEquipo, TipoAtributo, TipoComponente, Componente, Equipo, ChecklistItem
 from .serializers import (
     TipoEquipoSerializer, TipoAtributoSerializer,
@@ -41,6 +43,10 @@ class EquipoListView(generics.ListAPIView):
     )
     serializer_class = EquipoSerializer
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ('tipo_equipo', 'sucursal', 'estado')
+    search_fields = ('codigo_patrimonial', 'numero_serie')
+    ordering_fields = ('codigo_patrimonial', 'fecha_registro')
 
 
 class EquipoDetailView(generics.RetrieveAPIView):

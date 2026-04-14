@@ -2,6 +2,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters import rest_framework as filters
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
 from apps.actas.models import Acta
@@ -18,8 +21,38 @@ class ActaView(APIView):
 
     def get(self, request):
         queryset = Acta.objects.select_related(
-            'asignacion__empleado'
+            'asignacion__empleado', 'personal', 'terminos'
         ).order_by('-fecha')
+
+        tipo = request.query_params.get('tipo')
+        if tipo:
+            queryset = queryset.filter(tipo=tipo)
+
+        personal_id = request.query_params.get('personal')
+        if personal_id:
+            queryset = queryset.filter(personal_id=personal_id)
+
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_fin = request.query_params.get('fecha_fin')
+        if fecha_inicio and fecha_fin:
+            queryset = queryset.filter(fecha__date__range=[fecha_inicio, fecha_fin])
+        elif fecha_inicio:
+            queryset = queryset.filter(fecha__date__gte=fecha_inicio)
+        elif fecha_fin:
+            queryset = queryset.filter(fecha__date__lte=fecha_fin)
+
+        search = request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(numero_acta__icontains=search) |
+                Q(asignacion__empleado__nombres__icontains=search) |
+                Q(asignacion__empleado__apellidos__icontains=search)
+            )
+
+        ordering = request.query_params.get('ordering', '-fecha')
+        if ordering:
+            queryset = queryset.order_by(ordering)
+
         serializer = ActaListSerializer(queryset, many=True)
         return Response(serializer.data)
 

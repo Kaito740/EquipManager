@@ -2,6 +2,8 @@ from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters import rest_framework as filters
 from apps.core.permissions import DjangoModelPermissionsConView
 from .models import TipoMantenimiento, TicketMantenimiento
 from .serializers import TipoMantenimientoSerializer, TicketMantenimientoSerializer, CrearTicketMantenimientoSerializer, CerrarTicketMantenimientoSerializer
@@ -18,6 +20,10 @@ class TicketMantenimientoListView(generics.ListAPIView):
     queryset = TicketMantenimiento.objects.select_related('personal', 'tipo_mantenimiento').all()
     serializer_class = TicketMantenimientoSerializer
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ('estado', 'tipo_mantenimiento')
+    search_fields = ('descripcion',)
+    ordering_fields = ('fecha_inicio', 'fecha_cierre', 'estado')
 
 
 class TicketMantenimientoDetailView(generics.RetrieveAPIView):
