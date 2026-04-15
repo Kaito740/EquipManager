@@ -49,23 +49,17 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A([Inicio: Empleado devuelve equipos]) --> B[Tecnico marca estado de cada equipo]
-    B --> C{Estado del equipo?}
-    C -->|Conforme| D[Estado DISPONIBLE]
-    C -->|Incidencia leve| E[Registrar incidencia LEVE]
-    E --> F[Estado EN_MANTENIMIENTO]
-    C -->|Incidencia grave| G[Registrar incidencia GRAVE]
-    G --> H[Estado DADO_DE_BAJA]
-    C -->|No devuelto| I[Registrar incidencia con descripcion]
-    I --> J[Estado PERDIDO]
-    D --> K{Mas equipos?}
-    F --> K
-    H --> K
-    J --> K
-    K -->|Si| B
-    K -->|No| L[Confirmar devolucion]
-    L --> M[Transaccion: acta + actualiza estados]
-    M --> N([Fin])
+    A([Inicio: Empleado devuelve equipos]) --> B[Tecnico marca checklist por equipo]
+    B --> C{Equipo conforme?}
+    C -->|Si| D[Estado DISPONIBLE]
+    C -->|No| E[Registrar respuesta en checklist]
+    E --> F[Estado EN_MANTENIMIENTO o DADO_DE_BAJA segun gravedad]
+    D --> G{Mas equipos?}
+    F --> G
+    G -->|Si| B
+    G -->|No| H[Confirmar devolucion]
+    H --> I[Transaccion: acta + actualiza estados]
+    I --> J([Fin])
 ```
 
 ---
@@ -110,17 +104,17 @@ stateDiagram-v2
     [*] --> DISPONIBLE
     DISPONIBLE --> EN_USO : entrega confirmada
     EN_USO --> DISPONIBLE : devolucion sin incidencias
-    EN_USO --> EN_MANTENIMIENTO : incidencia LEVE
-    EN_USO --> DADO_DE_BAJA : incidencia GRAVE
+    EN_USO --> EN_MANTENIMIENTO : checklist con respuesta false
+    EN_USO --> DADO_DE_BAJA : equipo dañado sin reparacion
     EN_USO --> PERDIDO : no devuelto al cerrar acta
-    EN_MANTENIMIENTO --> DISPONIBLE : ticket cerrado
+    EN_MANTENIMIENTO --> DISPONIBLE : ticket cerrado y reparado
     EN_MANTENIMIENTO --> DADO_DE_BAJA : irreparable
 ```
 
 ### Descripcion de cada estado
 
 | Estado | Significa |
-|---|---|
+|--------|-----------|
 | DISPONIBLE | En almacen, listo para entregarse |
 | EN_USO | Con un empleado actualmente |
 | EN_MANTENIMIENTO | En taller, fuera de servicio temporalmente |
