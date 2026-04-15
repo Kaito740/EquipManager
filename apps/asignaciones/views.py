@@ -78,6 +78,7 @@ class ActaView(APIView):
 
 class ActaDetailView(APIView):
     permission_classes = [IsAuthenticated, _PermisoActa]
+    queryset = Acta.objects.all()
 
     def get(self, request, pk):
         acta = get_object_or_404(
@@ -95,6 +96,7 @@ class ActaDetailView(APIView):
 
 class ActaMantenimientoView(APIView):
     permission_classes = [IsAuthenticated, _PermisoActa]
+    queryset = Acta.objects.all()
 
     def post(self, request):
         serializer = ActaMantenimientoCreateSerializer(data=request.data)
@@ -117,6 +119,7 @@ class ActaMantenimientoView(APIView):
 
 class ActaDevolucionView(APIView):
     permission_classes = [IsAuthenticated, _PermisoActa]
+    queryset = Acta.objects.all()
 
     def post(self, request):
         serializer = ActaDevolucionCreateSerializer(data=request.data)

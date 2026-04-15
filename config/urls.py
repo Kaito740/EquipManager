@@ -39,6 +39,7 @@ api_partterns = [
     path('equipos/', include('apps.equipos.urls')),
     path('mantenimiento/', include('apps.mantenimiento.urls')),
     path('asignaciones/', include('apps.asignaciones.urls')),
+    path('actas/', include('apps.actas.urls')),
 ]
 
 urlpatterns = [

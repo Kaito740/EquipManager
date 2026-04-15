@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acta {{ acta.numero_acta }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1cm 2cm;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 11pt;
+            color: #000;
+        }
+
+        .table-header {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .acta-box {
+            border: 1px solid #000;
+            background-color: #f0f0f0;
+            padding: 5px;
+            text-align: right;
+        }
+
+        .receptor-box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: left;
+        }
+
+        table.data-table th {
+            background-color: #f0f0f0;
+        }
+
+        .tabla-firmas {
+            width: 100%;
+            margin-top: 50px;
+        }
+
+        .linea-firma {
+            border-top: 1px solid #000;
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        .huella-cuadro {
+            border: 1px solid #000;
+            width: 60px;
+            height: 80px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .label-bold { font-weight: bold; text-transform: uppercase; }
+        
+        .section-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10pt;
+            border-top: 0.5pt solid #000;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="acta-box">
+        <div style="font-weight: bold; font-size: 12pt;">ACTA DE {{ acta.get_tipo_display|upper }} DE EQUIPO INFORMÁTICO</div>
+        <div>Código: {{ acta.numero_acta }}</div>
+    </div>
+
+    <div class="receptor-box">
+        <div style="border-bottom: 1px solid #000; font-weight: bold; margin-bottom: 5px;">DATOS DEL RECEPTOR</div>
+        {% if acta.asignacion %}
+        <div><strong>Área:</strong> {{ acta.asignacion.empleado.area.nombre }}</div>
+        <div><strong>Sucursal:</strong> {{ acta.asignacion.empleado.area.sucursal.nombre }}</div>
+        <div><strong>Usuario:</strong> {{ acta.asignacion.empleado.apellidos }}, {{ acta.asignacion.empleado.nombres }}</div>
+        {% elif acta.ticket %}
+        <div><strong>Ticket N°:</strong> #{{ acta.ticket.id }}</div>
+        <div><strong>Tipo:</strong> {{ acta.ticket.tipo_mantenimiento.nombre }}</div>
+        <div><strong>Estado:</strong> {{ acta.ticket.get_estado_display }}</div>
+        {% endif %}
+        <div><strong>Fecha:</strong> {{ acta.fecha|date:"d/m/Y H:i" }}</div>
+    </div>
+
+    <div class="section-title">Equipos</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Código Patrimonial</th>
+                <th>Tipo</th>
+                <th>Número de Serie</th>
+                <th>Garantía</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if acta.asignacion %}
+            {% for ae in acta.asignacion.equipos.all %}
+            <tr>
+                <td>{{ ae.equipo.codigo_patrimonial }}</td>
+                <td>{{ ae.equipo.tipo_equipo.nombre }}</td>
+                <td>{{ ae.equipo.numero_serie|default:"-" }}</td>
+                <td>{{ ae.equipo.garantia|default:"-" }}</td>
+                <td>{{ ae.equipo.get_estado_display }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">Sin equipos registrados.</td></tr>
+            {% endfor %}
+            {% elif acta.ticket %}
+            {% for te in acta.ticket.equipos.all %}
+            <tr>
+                <td>{{ te.equipo.codigo_patrimonial }}</td>
+                <td>{{ te.equipo.tipo_equipo.nombre }}</td>
+                <td>{{ te.equipo.numero_serie|default:"-" }}</td>
+                <td>{{ te.equipo.garantia|default:"-" }}</td>
+                <td>{{ te.get_estado_anterior_display|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">Sin equipos registrados.</td></tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+
+    <div class="section-title">Observaciones</div>
+    <div style="border: 1px solid #000; padding: 10px; min-height: 40px;">
+        {% if acta.observaciones %}{{ acta.observaciones }}{% else %}Sin observaciones{% endif %}
+    </div>
+
+    {% if acta.terminos %}
+    <div class="section-title">Términos y Condiciones</div>
+    <div style="border: 1px solid #000; padding: 10px; min-height: 40px;">
+        {{ acta.terminos.contenido }}
+    </div>
+    {% endif %}
+
+    <table class="tabla-firmas">
+        <tr>
+            <td style="width: 50%; text-align: center; vertical-align: bottom;">
+                <div style="height: 80px;"></div>
+                <div class="linea-firma">
+                    <span class="label-bold">Firma del Receptor</span><br>
+                    {% if acta.asignacion %}DNI: {{ acta.asignacion.empleado.dni }}{% endif %}
+                </div>
+            </td>
+            <td style="width: 50%; text-align: center; vertical-align: bottom;">
+                <div style="height: 80px;"></div>
+                <div class="linea-firma">
+                    <span class="label-bold">Firma de Personal</span><br>
+                    DNI: {{ acta.personal.dni }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        EquipManager - Acta N° {{ acta.numero_acta }} - Página 1 de 1
+    </div>
+
+</body>
+</html>
