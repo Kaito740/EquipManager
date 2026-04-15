@@ -182,7 +182,6 @@ erDiagram
     Asignacion ||--o{ Acta : genera
     TicketMantenimiento ||--o{ Acta : genera
     Personal ||--o{ Acta : firma
-    Acta ||--o{ Incidencia : registra
     Acta ||--o{ RespuestaChecklist : contiene
     Equipo ||--o{ RespuestaChecklist : evaluado_en
 
@@ -212,15 +211,6 @@ erDiagram
         int equipo_id FK
         int checklist_item_id FK
         boolean respuesta
-    }
-
-    Incidencia {
-        int id PK
-        int equipo_id FK
-        int acta_id FK
-        text descripcion
-        string gravedad
-        datetime fecha
     }
 ```
 
@@ -252,8 +242,6 @@ erDiagram
 **Choices de `Equipo.estado`:** `DISPONIBLE`, `EN_USO`, `EN_MANTENIMIENTO`, `DADO_DE_BAJA`, `PERDIDO`
 
 **Choices de `Acta.tipo`:** `ENTREGA`, `DEVOLUCION`, `MANTENIMIENTO`
-
-**Choices de `Incidencia.gravedad`:** `LEVE`, `GRAVE`
 
 **Choices de `TerminosCondiciones.tipo_acta`:** `ENTREGA`, `DEVOLUCION`, `MANTENIMIENTO`
 

@@ -12,18 +12,11 @@ cp .env.example .env
 
 | Variable | Ejemplo | Requerida | Descripción |
 |----------|---------|-----------|-------------|
-| `SECRET_KEY` | `django-insecure-...` | ✅ Sí | Clave secreta de Django. Nunca exponerla ni subirla al repositorio. Generar una nueva con `python -m django startproject` o con `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` |
+| `SECRET_KEY` | `django-insecure-...` | ✅ Sí | Clave secreta de Django. Nunca exponerla ni subirla al repositorio. Generar una nueva con `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` |
 | `DEBUG` | `True` / `False` | ✅ Sí | `True` en desarrollo, `False` obligatorio en producción |
 | `DATABASE_URL` | `sqlite:///db.sqlite3` | ✅ Sí | Cadena de conexión a la base de datos. SQLite para desarrollo, PostgreSQL para producción |
-
----
-
-## Variables a agregar durante el desarrollo
-
-| Variable | Ejemplo | Módulo | Descripción |
-|----------|---------|--------|-------------|
-| `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Seguridad | Hosts permitidos, requerido cuando `DEBUG=False` |
-| `CORS_ALLOW_ALL_ORIGINS` | `True` / `False` | CORS | `True` en desarrollo permite cualquier origen. `False` en producción — configurar `CORS_ALLOWED_ORIGINS` con los dominios permitidos |
+| `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Solo prod | Hosts permitidos, requerido cuando `DEBUG=False` |
+| `CORS_ALLOW_ALL_ORIGINS` | `True` / `False` | ✅ Sí | `True` en desarrollo permite cualquier origen. `False` en producción — configurar `CORS_ALLOWED_ORIGINS` con los dominios permitidos |
 
 ---
 

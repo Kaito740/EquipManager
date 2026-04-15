@@ -36,8 +36,8 @@ sequenceDiagram
 
 | Token | Duración | Qué hacer cuando expira |
 |-------|----------|-------------------------|
-| Access | 1 hora | Usar el refresh token para obtener uno nuevo |
-| Refresh | 7 días | El usuario debe volver a hacer login |
+| Access | 60 minutos | Usar el refresh token para obtener uno nuevo |
+| Refresh | 1 día | El usuario debe volver a hacer login |
 
 ---
 

@@ -14,7 +14,7 @@ Registro de todas las decisiones tomadas durante el diseño, con su justificaci�
 | Campos opcionales | NULL en base de datos | Tipos correctos, integridad referencial |
 | Estados y tipos | Choices en código | Son fijos por diseño del negocio |
 | Permisos | Sistema nativo de Django | Reemplaza tabla Rol personalizada, más flexible y granular |
-| Autenticación | JWT (djangorestframework-simplejwt) | Estándar de la industria, compatible con cualquier frontend |
+| Autenticación | JWT (djangorestframework-simplejwt) | Estándar de la industria, compatible con cualquier frontend. Access: 60 min, Refresh: 1 día |
 | Consumibles | Fuera del sistema | Sin código patrimonial, no se registra |
 | Código QR | Eliminado | El código patrimonial cumple la misma función de identificación sin depender de hardware adicional |
 | Mantenimiento preventivo | Sin periodicidad en el sistema | Problema cultural, no técnico |

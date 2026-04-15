@@ -23,10 +23,12 @@ EquipManager reemplaza ese proceso manual con una API que registra cada movimien
 
 ## Stack
 
-- **Backend:** Django + Django REST Framework
+- **Backend:** Django 6.0 + Django REST Framework
 - **Autenticación:** JWT (djangorestframework-simplejwt)
 - **Base de datos:** SQLite (desarrollo) / PostgreSQL (producción)
 - **Generación de PDFs:** ReportLab
+- **Documentación API:** drf-yasg (Swagger/OpenAPI)
+- **Filtros:** django-filter
 - **Testing:** pytest + pytest-django
 
 ## Requisitos previos
@@ -118,6 +120,4 @@ MIT
 - [Autenticación y permisos](docs/authentication.md) — Flujo JWT y sistema de grupos de Django
 - [Decisiones técnicas](docs/decisions.md) — Por qué se eligió cada tecnología y patrón
 - [Variables de entorno](docs/environment.md) — Configuración del proyecto
-- [Referencia de la API](docs/api.md) — Endpoints, parámetros y ejemplos *(pendiente)*
-- [Deployment](docs/deployment.md) — Cómo desplegar en producción *(pendiente)*
-- [Testing](docs/testing.md) — Cómo correr los tests y qué cubren *(pendiente)*
+- [Referencia de la API](https://equipmanager.ddns.net/swagger/) — Swagger UI con todos los endpoints
