@@ -1,6 +1,6 @@
 # EquipManager
 
-> 🚧 En desarrollo
+> ✅ Completado
 
 REST API para la gestión de activos tecnológicos de una empresa — cubre el ciclo completo de entrega de equipos, mantenimientos y devoluciones, con generación automática de actas y notificaciones por correo.
 
@@ -33,11 +33,54 @@ EquipManager reemplaza ese proceso manual con una API que registra cada movimien
 
 ## Requisitos previos
 
-- Python 3.11 o superior
+- Python 3.12 o superior (solo instalación local)
 - Git
-- PostgreSQL (solo para producción)
+- Docker + Docker Compose (opcional)
 
-## Instalación
+### Instalación de Docker
+
+**Windows:**
+
+1. Descarga Docker Desktop desde https://www.docker.com/products/docker-desktop
+2. Ejecuta el instalador y sigue las instrucciones
+3. Inicia Docker Desktop
+
+**Mac:**
+
+1. Descarga Docker Desktop desde https://www.docker.com/products/docker-desktop
+2. Arrastra Docker a tu carpeta de Aplicaciones
+3. Abre Docker Desktop
+
+**Linux (Ubuntu/Debian):**
+
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+```
+
+Cierra sesión y vuelve a entrar para aplicar el cambio de grupo.
+
+## Instalación con Docker (recomendado)
+
+**1. Clonar el repositorio**
+
+```bash
+git clone https://github.com/Kaito740/EquipManager.git
+cd EquipManager
+```
+
+**2. Iniciar los servicios**
+
+```bash
+docker-compose up --build
+```
+
+La API estará disponible en `http://localhost:8000/`
+
+## Instalación local (sin Docker)
 
 **1. Clonar el repositorio**
 
