@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: equipmanager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - equipmanager_network
+
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn --bind :8000 --workers 3 config.wsgi:application"
+    volumes:
+      - staticfiles:/app/staticfiles
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+    networks:
+      - equipmanager_network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    networks:
+      - equipmanager_network
+    volumes:
+      - staticfiles:/app/staticfiles
+
+volumes:
+  postgres_data:
+  staticfiles:
+
+networks:
+  equipmanager_network:
+    driver: bridge
